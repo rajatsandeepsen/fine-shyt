@@ -22,7 +22,15 @@ url = "https://download.pytorch.org/whl/cu126"
 explicit = true
 
 [tool.poe.tasks]
+gpu = "uv run ./src/gpu.py"
 start = "uv run --with jupyter jupyter lab"
 
 [tool.ruff.lint]
 ignore = ["E731"]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.3.0",
+    "poethepoet>=0.48.0",
+    "ty>=0.0.70",
+]
