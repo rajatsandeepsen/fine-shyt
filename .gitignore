@@ -8,6 +8,9 @@ wheels/
 
 .env
 
+# ipynb
+.ipynb_checkpoints
+
 # Virtual environments
 .venv
 
