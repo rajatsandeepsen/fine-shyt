@@ -4,9 +4,20 @@ version = "0.1.0"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "fastapi[standard]>=0.141.1",
     "torch>=2.13.0",
     "unsloth>=2026.3.11",
 ]
+
+[tool.poe.tasks]
+gpu = "uv run ./src/gpu.py"
+lab = "uv run --with jupyter jupyter lab"
+dev = "uv run fastapi dev --port 3000 --reload-dir ./app"
+
+[tool.fastapi]
+entrypoint = "app.main:api"
+port = 3000
+reload-dir = "./app"
 
 [tool.uv.sources]
 torch = [
@@ -20,10 +31,6 @@ torchvision = [
 name = "pytorch-cu126"
 url = "https://download.pytorch.org/whl/cu126"
 explicit = true
-
-[tool.poe.tasks]
-gpu = "uv run ./src/gpu.py"
-start = "uv run --with jupyter jupyter lab"
 
 [tool.ruff.lint]
 ignore = ["E731"]

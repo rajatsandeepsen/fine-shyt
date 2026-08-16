@@ -15,5 +15,5 @@ template = tokenizer.chat_template
 if not template:
     raise ValueError("tokenizer.chat_template is empty or None")
 
-out_path = Path(__file__).resolve().parent / "original.jinja"
+out_path = Path(__file__).resolve().parent / "template.jinja"
 Path(out_path).write_text(template, encoding="utf-8")
