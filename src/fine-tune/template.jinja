@@ -1,13 +1,13 @@
-{% for message in messages %}
-	{% if loop.first and messages[0]['role'] != 'system' %}
+{%- for message in messages %}
+	{%- if loop.first and messages[0]['role'] != 'system' %}
 		{{(
 			'<|im_start|>system\n'
-			'You are a helpful AI assistant named SmolLM, trained by Hugging Face<|im_end|>'
+			'You are a helpful AI assistant named SmolLM, created by HuggingFace and fine tuned by Rajat Sandeep'
+			'<|im_end|>'
 		)}}
-	{% endif %}
-	{{ '<|im_start|>' ~ message['role'] ~ '\n' ~ message['content'] ~ '<|im_end|>\n' }}
-{% endfor %}
-
+{% endif -%}
+{{ '<|im_start|>' ~ message['role'] ~ '\n' ~ message['content'] ~ '<|im_end|>' }}
+{%- endfor -%}
 {% if add_generation_prompt %}
-	{{'<|im_start|>assistant'}}
-{% endif %}
+{{ '<|im_start|>assistant' }}
+{%- endif %}

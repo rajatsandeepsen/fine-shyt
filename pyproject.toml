@@ -2,22 +2,32 @@
 name = "model"
 version = "0.1.0"
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.12"
 dependencies = [
+    "datasets>=4.3.0",
     "fastapi[standard]>=0.141.1",
     "torch>=2.13.0",
     "unsloth>=2026.3.11",
 ]
 
+[tool.poe]
+executor = "uv"
+env = { PYTHONPATH = "." }
+
+# uv run poe <task_name>
+
 [tool.poe.tasks]
 gpu = "uv run ./src/gpu.py"
 lab = "uv run --with jupyter jupyter lab"
-dev = "uv run fastapi dev --port 3000 --reload-dir ./app"
+fine = "uv run ./src/fine-tune/model.py"
+
+[tool.poe.tasks.dev]
+help   = "Run an inference server with model"
+cmd = "uv run fastapi dev --reload-dir ./app --port ${port}"
+args = [{ name = "port", options = ["--port"], default = "3000" }]
 
 [tool.fastapi]
 entrypoint = "app.main:api"
-port = 3000
-reload-dir = "./app"
 
 [tool.uv.sources]
 torch = [

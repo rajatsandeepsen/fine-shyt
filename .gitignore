@@ -16,3 +16,5 @@ wheels/
 
 # unsloth
 unsloth_compiled_cache
+unsloth_training_checkpoints
+training_output
