@@ -31,7 +31,8 @@ raw_data: list[dict] = [item.model_dump(mode="json") for item in data]
 # print(raw_data[0]["messages"][0]["content"])
 
 template_path = Path(__file__).resolve().parent / "template.jinja"
-template = Template(Path(template_path).read_text(encoding="utf-8"))
+chat_template = Path(template_path).read_text(encoding="utf-8")
+template = Template(chat_template)
 
 
 def to_text(data: dict) -> dict:
@@ -65,6 +66,8 @@ model = FastModel.get_peft_model(
     random_state=3407,
 )
 
+tokenizer.chat_template = chat_template
+
 if not tokenizer.chat_template:
     raise ValueError("tokenizer.chat_template is empty or None")
 
@@ -78,7 +81,8 @@ trainer = SFTTrainer(
         per_device_train_batch_size=2,
         gradient_accumulation_steps=4,
         warmup_steps=5,
-        max_steps=30,
+        # max_steps=30,
+        max_steps=10,
         learning_rate=2e-4,
         logging_steps=1,
         optim="adamw_8bit",
@@ -98,5 +102,9 @@ trainer = train_on_responses_only(
 trainer_stats = trainer.train()
 print(trainer_stats)
 
-# model.save_pretrained("SmolLM2-360M-Instruct-lora")
-# tokenizer.save_pretrained("SmolLM2-360M-Instruct-lora")
+# if we want merged model, not just adapter weights
+if False:
+    model = model.merge_and_unload()
+
+model.save_pretrained("fine-tuned-model")
+tokenizer.save_pretrained("fine-tuned-model")
