@@ -1,3 +1,5 @@
+import json
+from pathlib import Path
 from typing import cast
 
 from peft import PeftModel
@@ -8,15 +10,12 @@ from transformers import (
     TokenizersBackend,
 )
 
-from src.fine_tune.response import parse_response
-
 base = "unsloth/SmolLM2-360M-Instruct"
 adapter_dir = "fine-tuned-model"
 
 tokenizer = cast(TokenizersBackend, AutoTokenizer.from_pretrained(adapter_dir))
 base_model = AutoModelForCausalLM.from_pretrained(base)
 model = PeftModel.from_pretrained(base_model, adapter_dir)
-
 
 messages = [
     {"role": "system", "content": "You are a helpful assistant."},
@@ -49,8 +48,12 @@ generated_text = tokenizer.batch_decode(
     output,
     skip_special_tokens=True,
 )
-print(generated_text)
+
+parent_path = Path(__file__).resolve().parent
+schema_path = parent_path / "schema.json"
+response_schema: dict = json.loads(schema_path.read_text(encoding="utf-8"))
+
+tokenizer.response_schema = response_schema
 
 for text in generated_text:
-    # print(tokenizer.parse_response(text))
-    print(parse_response(text))
+    print(tokenizer.parse_response(text))

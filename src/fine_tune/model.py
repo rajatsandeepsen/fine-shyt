@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from typing import cast
 
@@ -30,9 +31,14 @@ data: list[Data] = [
 raw_data: list[dict] = [item.model_dump(mode="json") for item in data]
 # print(raw_data[0]["messages"][0]["content"])
 
-template_path = Path(__file__).resolve().parent / "template.jinja"
-chat_template = Path(template_path).read_text(encoding="utf-8")
+parent_path = Path(__file__).resolve().parent
+
+template_path = parent_path / "template.jinja"
+chat_template = template_path.read_text(encoding="utf-8")
 template = Template(chat_template)
+
+schema_path = parent_path / "schema.json"
+response_schema: dict = json.loads(schema_path.read_text(encoding="utf-8"))
 
 
 def to_text(data: dict) -> dict:
@@ -67,6 +73,7 @@ model = FastModel.get_peft_model(
 )
 
 tokenizer.chat_template = chat_template
+tokenizer.response_schema = response_schema
 
 if not tokenizer.chat_template:
     raise ValueError("tokenizer.chat_template is empty or None")

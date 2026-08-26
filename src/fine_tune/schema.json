@@ -1,0 +1,13 @@
+{
+	"type": "object",
+	"properties": {
+		"role": {
+			"const": "assistant"
+		},
+		"content": {
+			"type": "string",
+			"x-regex": "(?:.*assistant\\n)?(.*?)$"
+		}
+	},
+	"required": ["role", "content"]
+}
