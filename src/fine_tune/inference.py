@@ -10,6 +10,9 @@ from transformers import (
     TokenizersBackend,
 )
 
+from app.api.chat.request import Message
+from app.api.chat.response import AssistantMessage
+
 base = "unsloth/SmolLM2-360M-Instruct"
 adapter_dir = "fine-tuned-model"
 
@@ -17,43 +20,51 @@ tokenizer = cast(TokenizersBackend, AutoTokenizer.from_pretrained(adapter_dir))
 base_model = AutoModelForCausalLM.from_pretrained(base)
 model = PeftModel.from_pretrained(base_model, adapter_dir)
 
-messages = [
-    {"role": "system", "content": "You are a helpful assistant."},
-    {"role": "user", "content": "Who built you?"},
-]
+if not tokenizer.response_schema:
+    parent_path = Path(__file__).resolve().parent
+    schema_path = parent_path / "schema.json"
+    response_schema: dict = json.loads(schema_path.read_text(encoding="utf-8"))
 
-input = tokenizer.apply_chat_template(
-    messages,
-    tokenize=True,
-    add_generation_prompt=True,
-    return_tensors="pt",
-    return_dict=True,
-)
+    tokenizer.response_schema = response_schema
 
-input = cast(BatchEncoding, input).to(model.device)
-print(input)
 
-output = model.generate(
-    **input,
-    max_new_tokens=128,
-    do_sample=True,
-    temperature=0.7,
-    top_p=0.9,
-    pad_token_id=tokenizer.eos_token_id,
-)
+def Inference(messages: list[Message] | list[dict]) -> list[AssistantMessage]:
+    input = tokenizer.apply_chat_template(
+        cast(list[dict], messages),
+        tokenize=True,
+        add_generation_prompt=True,
+        return_tensors="pt",
+        return_dict=True,
+    )
 
-print(output)
+    input = cast(BatchEncoding, input).to(model.device)
+    print(input)
 
-generated_text = tokenizer.batch_decode(
-    output,
-    skip_special_tokens=True,
-)
+    output = model.generate(
+        **input,
+        max_new_tokens=128,
+        do_sample=True,
+        temperature=0.7,
+        top_p=0.9,
+        pad_token_id=tokenizer.eos_token_id,
+    )
 
-parent_path = Path(__file__).resolve().parent
-schema_path = parent_path / "schema.json"
-response_schema: dict = json.loads(schema_path.read_text(encoding="utf-8"))
+    print(output)
 
-tokenizer.response_schema = response_schema
+    generated_text = tokenizer.batch_decode(
+        output,
+        skip_special_tokens=True,
+    )
 
-for text in generated_text:
-    print(tokenizer.parse_response(text))
+    return cast(
+        list[AssistantMessage],
+        [tokenizer.parse_response(text) for text in generated_text],
+    )
+
+
+if __name__ == "__main__":
+    messages = [
+        {"role": "user", "content": "Who built you?"},
+    ]
+
+    print(Inference(messages))
