@@ -3,7 +3,7 @@ from typing import Any
 from fastapi import FastAPI
 from fastapi.routing import APIRoute
 
-from .api.chat import api as chat
+from .api.chat.main import api as chat
 
 api = FastAPI(title="Inference API", version="1.0.0")
 api.include_router(chat)

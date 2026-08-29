@@ -30,7 +30,8 @@ if not tokenizer.response_schema:
 
 def Inference(messages: list[Message] | list[dict]) -> list[AssistantMessage]:
     input = tokenizer.apply_chat_template(
-        cast(list[dict], messages),
+        conversation=cast(list[dict], messages),
+        tools=[],
         tokenize=True,
         add_generation_prompt=True,
         return_tensors="pt",

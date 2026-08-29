@@ -35,14 +35,14 @@ parent_path = Path(__file__).resolve().parent
 
 template_path = parent_path / "template.jinja"
 chat_template = template_path.read_text(encoding="utf-8")
-template = Template(chat_template)
+template = cast(Template, Template(chat_template))
 
 schema_path = parent_path / "schema.json"
 response_schema: dict = json.loads(schema_path.read_text(encoding="utf-8"))
 
 
 def to_text(data: dict) -> dict:
-    text = cast(str, template.render(**data)).strip()
+    text = template.render(**data).strip()
     print(text)
     return {"text": text}
 

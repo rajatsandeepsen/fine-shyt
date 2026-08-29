@@ -19,8 +19,9 @@ env = { PYTHONPATH = "." }
 [tool.poe.tasks]
 gpu = "uv run ./src/gpu.py"
 lab = "uv run --with jupyter jupyter lab"
-fine = "uv run ./src/fine_tune/model.py"
+fine-tune = "uv run ./src/fine_tune/model.py"
 fine-infer = "uv run ./src/fine_tune/inference.py"
+test-template = "uv run ./src/fine_tune/test.py"
 
 [tool.poe.tasks.dev]
 help   = "Run an inference server with model"
