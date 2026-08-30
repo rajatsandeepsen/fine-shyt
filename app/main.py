@@ -2,14 +2,18 @@ from typing import Any
 
 from fastapi import FastAPI
 from fastapi.routing import APIRoute
+from fastapi.staticfiles import StaticFiles
 
 from .api.chat.main import api as chat
 
 api = FastAPI(title="Inference API", version="1.0.0")
-api.include_router(chat)
+
+api.include_router(chat, prefix="/api")
+
+api.mount("/", StaticFiles(directory="public", html=True))
 
 
-@api.get("/")
+@api.get("/api/test")
 def root() -> dict[str, Any]:
     paths = [
         route.path

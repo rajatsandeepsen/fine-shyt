@@ -28,6 +28,11 @@ help   = "Run an inference server with model"
 cmd = "uv run fastapi dev --reload-dir ./app --port ${port}"
 args = [{ name = "port", options = ["--port"], default = "3000" }]
 
+[tool.poe.tasks.prod]
+help   = "Run a production inference server with model"
+cmd = "uv run fastapi run --port ${port}"
+args = [{ name = "port", options = ["--port"], default = "3000" }]
+
 [tool.fastapi]
 entrypoint = "app.main:api"
 
