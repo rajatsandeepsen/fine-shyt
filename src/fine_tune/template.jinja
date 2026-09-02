@@ -21,7 +21,7 @@ return {{ thisKeyWord }}.tool_2(data, input);
 	{%- if loop.first and messages[0]['role'] != 'system' %}
 		{{(
 			'<|im_start|>system\n'
-			'You are a helpful AI assistant named SmolLM, created by HuggingFace and fine tuned by Rajat Sandeep.'
+			'You are a helpful AI assistant named SmolLM, created by HuggingFace.'
 			~ (tool_instructions if tools) ~
 			'<|im_end|>'
 		)}}
