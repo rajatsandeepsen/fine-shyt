@@ -4,11 +4,9 @@ from pathlib import Path
 
 from unsloth import FastModel
 
-model, tokenizer = FastModel.from_pretrained(
-    model_name="unsloth/SmolLM2-360M-Instruct",
-    max_seq_length=2048,
-    load_in_4bit=True,
-)
+from src.fine_tune.config import Config
+
+model, tokenizer = FastModel.from_pretrained(**Config.as_dict())
 
 template = tokenizer.chat_template
 

@@ -12,6 +12,7 @@ from unsloth import FastModel, train_on_responses_only
 from trl import SFTConfig, SFTTrainer
 
 from app.api.chat.request import Message
+from .config import Config
 
 
 class Data(BaseModel):
@@ -54,11 +55,7 @@ train_dataset: Dataset = Dataset.from_list(raw_data).map(
 print(train_dataset)
 
 
-source_model, tokenizer = FastModel.from_pretrained(
-    model_name="unsloth/SmolLM2-360M-Instruct",
-    max_seq_length=2048,
-    load_in_4bit=True,
-)
+source_model, tokenizer = FastModel.from_pretrained(**Config.as_dict())
 
 model = FastModel.get_peft_model(
     model=source_model,

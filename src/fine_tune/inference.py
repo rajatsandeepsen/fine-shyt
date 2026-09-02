@@ -13,7 +13,9 @@ from transformers import (
 from app.api.chat.request import Message
 from app.api.chat.response import AssistantMessage
 
-base = "unsloth/SmolLM2-360M-Instruct"
+from .config import Config
+
+base = Config.model_name
 adapter_dir = "fine-tuned-model"
 
 tokenizer = cast(TokenizersBackend, AutoTokenizer.from_pretrained(adapter_dir))

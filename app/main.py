@@ -4,6 +4,8 @@ from fastapi import FastAPI
 from fastapi.routing import APIRoute
 from fastapi.staticfiles import StaticFiles
 
+from src.fine_tune.config import Config
+
 from .api.chat.main import api as chat
 
 api = FastAPI(title="Inference API", version="1.0.0")
@@ -24,4 +26,5 @@ def root() -> dict[str, Any]:
     return {
         "message": "Inference server is running",
         "endpoints": paths,
+        "mode_config": Config.as_dict(),
     }
